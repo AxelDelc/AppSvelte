@@ -109,7 +109,7 @@
 
 	<!-- Grille -->
 	<div class="grid grid-cols-1 gap-6 p-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-		{#each paginated as country}
+		{#each paginated as country (country.cca3)}
 			<div class="relative">
 				{#if data.user}
 					<button

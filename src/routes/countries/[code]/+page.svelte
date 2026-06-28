@@ -79,7 +79,7 @@
 				<p class="text-sm text-gray-500">Monnaies</p>
 				<p class="font-semibold">
 					{Object.values(data.country.currencies)
-						.map((c: any) => c.name)
+						.map((c: { name: string }) => c.name)
 						.join(', ')}
 				</p>
 			</div>
