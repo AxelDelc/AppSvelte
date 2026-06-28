@@ -3,7 +3,7 @@
 	import type { PageData } from './$types';
 	let { data }: { data: PageData } = $props();
 
-	let isFavorite = $state(data.isFavorite);
+	let isFavorite = $derived(data.isFavorite);
 	let loading = $state(false);
 </script>
 
@@ -26,7 +26,6 @@
 					use:enhance={() => {
 						loading = true;
 						return async ({ update }) => {
-							isFavorite = !isFavorite;
 							loading = false;
 							await update({ reset: false });
 						};
