@@ -1,23 +1,25 @@
 <script lang="ts">
-	import { signUp, useSession } from '$lib/auth-client'
-	import { goto } from '$app/navigation'
+	import { signUp, useSession } from '$lib/auth-client';
+	import { goto } from '$app/navigation';
 
-	const session = useSession()
-	$effect(() => { if ($session.data) goto('/') })
+	const session = useSession();
+	$effect(() => {
+		if ($session.data) goto('/');
+	});
 
-	let name = $state('')
-	let email = $state('')
-	let password = $state('')
-	let error = $state('')
-	let loading = $state(false)
+	let name = $state('');
+	let email = $state('');
+	let password = $state('');
+	let error = $state('');
+	let loading = $state(false);
 
 	async function handleSubmit(e: Event) {
-		e.preventDefault()
-		error = ''
-		loading = true
-		const { error: err } = await signUp.email({ name, email, password, callbackURL: '/' })
-		if (err) error = err.message ?? "Erreur lors de l'inscription."
-		loading = false
+		e.preventDefault();
+		error = '';
+		loading = true;
+		const { error: err } = await signUp.email({ name, email, password, callbackURL: '/' });
+		if (err) error = err.message ?? "Erreur lors de l'inscription.";
+		loading = false;
 	}
 </script>
 

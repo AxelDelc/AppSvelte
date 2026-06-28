@@ -20,7 +20,7 @@
 		await fetch('/api/favorites', {
 			method,
 			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({ cca3 }),
+			body: JSON.stringify({ cca3 })
 		});
 	}
 
@@ -82,16 +82,25 @@
 					{data.user.name.charAt(0).toUpperCase()}
 				</a>
 				<button
-					onclick={async () => { await signOut(); location.reload(); }}
+					onclick={async () => {
+						await signOut();
+						location.reload();
+					}}
 					class="rounded-lg bg-white/20 px-4 py-2 text-sm font-medium text-white hover:bg-white/30"
 				>
 					Déconnexion
 				</button>
 			{:else}
-				<a href="/login" class="rounded-lg bg-white/20 px-4 py-2 text-sm font-medium text-white hover:bg-white/30">
+				<a
+					href="/login"
+					class="rounded-lg bg-white/20 px-4 py-2 text-sm font-medium text-white hover:bg-white/30"
+				>
 					Connexion
 				</a>
-				<a href="/register" class="rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-100">
+				<a
+					href="/register"
+					class="rounded-lg bg-white px-4 py-2 text-sm font-medium text-gray-800 hover:bg-gray-100"
+				>
 					Inscription
 				</a>
 			{/if}
@@ -105,7 +114,7 @@
 				{#if data.user}
 					<button
 						onclick={() => toggleFavorite(country.cca3)}
-						class="absolute right-3 top-3 z-10 text-xl leading-none"
+						class="absolute top-3 right-3 z-10 text-xl leading-none"
 						title={favorites.has(country.cca3) ? 'Retirer des favoris' : 'Ajouter aux favoris'}
 					>
 						{favorites.has(country.cca3) ? '★' : '☆'}

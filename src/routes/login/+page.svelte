@@ -1,22 +1,24 @@
 <script lang="ts">
-	import { signIn, useSession } from '$lib/auth-client'
-	import { goto } from '$app/navigation'
+	import { signIn, useSession } from '$lib/auth-client';
+	import { goto } from '$app/navigation';
 
-	const session = useSession()
-	$effect(() => { if ($session.data) goto('/') })
+	const session = useSession();
+	$effect(() => {
+		if ($session.data) goto('/');
+	});
 
-	let email = $state('')
-	let password = $state('')
-	let error = $state('')
-	let loading = $state(false)
+	let email = $state('');
+	let password = $state('');
+	let error = $state('');
+	let loading = $state(false);
 
 	async function handleSubmit(e: Event) {
-		e.preventDefault()
-		error = ''
-		loading = true
-		const { error: err } = await signIn.email({ email, password, callbackURL: '/' })
-		if (err) error = err.message ?? 'Email ou mot de passe incorrect.'
-		loading = false
+		e.preventDefault();
+		error = '';
+		loading = true;
+		const { error: err } = await signIn.email({ email, password, callbackURL: '/' });
+		if (err) error = err.message ?? 'Email ou mot de passe incorrect.';
+		loading = false;
 	}
 </script>
 
