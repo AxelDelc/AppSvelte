@@ -1,46 +1,91 @@
-# sv
+# Explorateur de pays
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+Application SvelteKit permettant d'explorer les pays du monde, avec authentification et système de favoris.
 
-## Creating a project
+## Stack technique
 
-If you're seeing this, you've probably already done this step. Congrats!
+- **SvelteKit** (Node adapter, SSR) + **Svelte 5** (runes)
+- **Better Auth** — authentification email/mot de passe
+- **Prisma** + **PostgreSQL** (Supabase) — stockage des favoris
+- **Tailwind CSS** — styles
+- **Vitest** + **Playwright** — tests
+- **TypeScript** strict
 
-```sh
-# create a new project
-npx sv create my-app
-```
+## Prérequis
 
-To recreate this project with the same configuration:
+- Node.js 18+
+- pnpm
+- Une base de données PostgreSQL (ex : Supabase)
 
-```sh
-# recreate this project
-pnpm dlx sv@0.12.4 create --template minimal --types ts --add prettier eslint vitest="usages:unit,component" tailwindcss="plugins:none" sveltekit-adapter="adapter:node" --install pnpm svelteTest
-```
-
-## Developing
-
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+## Installation
 
 ```sh
-npm run dev
-
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
+pnpm install
+pnpm exec playwright install  # requis pour les tests navigateur
 ```
 
-## Building
+## Variables d'environnement
 
-To create a production version of your app:
+Créer un fichier `.env` à la racine :
+
+```env
+DATABASE_URL=       # Connexion poolée Supabase (Prisma runtime)
+DIRECT_URL=         # Connexion directe Supabase (migrations uniquement)
+BETTER_AUTH_SECRET= # Secret aléatoire pour la signature des sessions
+BETTER_AUTH_URL=    # URL de base de l'app (ex: http://localhost:5173)
+```
+
+## Commandes
 
 ```sh
-npm run build
+pnpm dev            # Serveur de développement
+pnpm build          # Build de production
+pnpm check          # Vérification des types Svelte/TypeScript
+pnpm lint           # Prettier + ESLint
+pnpm format         # Auto-formatage
+pnpm test:unit      # Tous les tests Vitest
+pnpm commit         # Commit conventionnel via commitizen
 ```
 
-You can preview the production build with `npm run preview`.
+Lancer un seul fichier de test :
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+```sh
+pnpm vitest run src/routes/page.svelte.spec.ts
+```
 
-# AppSvelte
+## Base de données
 
-Application projet avec SvelteKit
+```sh
+pnpm prisma migrate dev   # Appliquer les migrations
+pnpm prisma studio        # Interface graphique Prisma
+```
+
+## Architecture
+
+### Routes
+
+| Route | Description |
+|---|---|
+| `/` | Grille de pays avec recherche, filtre par région, tri et pagination (28 items/page) |
+| `/countries/[code]` | Détail d'un pays (population, capitale, langues, monnaies, favoris) |
+| `/login` | Connexion email/mot de passe |
+| `/register` | Création de compte |
+| `/profile` | Profil utilisateur et liste des favoris |
+| `/api/auth/[...all]` | Endpoints Better Auth (sessions, cookies) |
+| `/api/favorites` | API REST pour ajouter/supprimer/lister les favoris |
+
+### Flux de données
+
+1. `+page.server.ts` charge les données côté serveur (session, favoris DB, liste des pays)
+2. `+page.svelte` reçoit les données et gère filtrage/tri/pagination **côté client** via `$derived` (Svelte 5)
+3. Les mutations de favoris passent par `fetch /api/favorites` avec mise à jour optimiste
+
+### Sources de données
+
+- **Pays** : librairie npm `world-countries` (données statiques)
+- **Population** : API externe `countriesnow.space`
+- **Drapeaux** : `flagcdn.com`
+
+### Authentification
+
+Better Auth avec adaptateur Prisma. Les sessions sont gérées via cookies HTTP. Le client (`src/lib/auth-client.ts`) expose `signIn`, `signOut`, `signUp` et `useSession` pour usage côté navigateur.
